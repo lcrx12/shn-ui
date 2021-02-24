@@ -2,7 +2,7 @@
   "name": "shn-vue-ui-lcrx",
   "version": "1.3.18-gac-12.0.1",
   "license": "ISC",
-  "description": "A Component Library for Vue.js. (for lcrx)",
+  "description": "A Component Library for Vue.js. (forked by https://github.com/ShnHz/shn-ui for lcrx)",
   "main": "lib/shn-vue-ui.umd.min.js",
   "private": false,
   "scripts": {
