@@ -49,11 +49,12 @@
     <shn-modal :maskClosable="false" :visible.sync="cropperShow" title="裁剪图片" v-if="cropper">
       <template v-slot:body>
         <div 
-          :style="{width:cropperWidth + 'px',height:cropperHeight + 'px'}"
+          :style="{width:cropperModalBodyWidth + 'px',height:cropperModalBodyHeight + 'px'}"
         >
           <vue-cropper
             :fixed="fixed"
             :fixedNumber="fixedNumber"
+            :fixedBox="cropperFixedBox"
             :full="true"
             :img="cropperImg"
             :outputSize="outputSize"
@@ -95,17 +96,25 @@ export default {
       type: Boolean,
       default: true
     },
+    maxSizeKb:{
+      type: Number,
+      default: 2048
+    },
     cropper: {
       type: Boolean,
       default: false
     },
-    cropperWidth: {
+    cropperModalBodyWidth: {
       type: Number,
       default: 600
     },
-    cropperHeight: {
+    cropperModalBodyHeight: {
       type: Number,
       default: 500
+    },
+    cropperFixedBox: {
+      type: Boolean,
+      default: false
     },
     cropType: {
       type: String,
@@ -171,9 +180,18 @@ export default {
   methods: {
     changeImage(e) {
       let file = e.target.files[0]
-      this.fileName = file.name
+      let _this = this      
+      
+      if (!_this.cropper) {
+        const flagFileSize = file.size / 1024 > _this.maxSizeKb
+        if (flagFileSize) {
+          alert('图片不能大于' + _this.maxSizeKb + 'Kb!')
+          return
+        }
+      }
+
+      _this.fileName = file.name
       let reader = new FileReader()
-      let _this = this
       reader.onloadend = function() {
         // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
         let dataURL = reader.result
@@ -191,10 +209,30 @@ export default {
 
       reader.readAsDataURL(file) // 读出 base64
     },
+    getBase64ImgSize(str) {
+      //获取base64图片大小，返回KB数字
+      var str = str.replace('data:image/jpeg;base64,', '');//这里根据自己上传图片的格式进行相应修改
+      
+      var strLength = str.length;
+      var fileLength = parseInt(strLength - (strLength / 8) * 2);
+
+      // 由字节转换为KB
+      var size = "";
+      size = (fileLength / 1024).toFixed(2);
+      
+      return parseInt(size);
+    },
     cropperConfirm() {
       let _this = this
       if (this.cropType == 'base64') {
         this.$refs.cropper.getCropData(data => {
+          
+          const flagFileSize = _this.getBase64ImgSize(data) > _this.maxSizeKb
+          if (flagFileSize) {
+            alert('图片不能大于' + _this.maxSizeKb + 'Kb!')
+            return
+          }
+
           _this.list.push(data)
           _this.$emit('change', data, _this.list, _this.fileName)
         })
