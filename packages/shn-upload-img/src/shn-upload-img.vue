@@ -48,7 +48,9 @@
     <shn-preview-img :list="list" :visible.sync="previewImgShow" v-model="previewImg" />
     <shn-modal :maskClosable="false" :visible.sync="cropperShow" title="裁剪图片" v-if="cropper">
       <template v-slot:body>
-        <div style="width:600px;height:500px">
+        <div 
+          :style="{width:cropperWidth + 'px',height:cropperHeight + 'px'}"
+        >
           <vue-cropper
             :fixed="fixed"
             :fixedNumber="fixedNumber"
@@ -96,6 +98,14 @@ export default {
     cropper: {
       type: Boolean,
       default: false
+    },
+    cropperWidth: {
+      type: Number,
+      default: 600
+    },
+    cropperHeight: {
+      type: Number,
+      default: 500
     },
     cropType: {
       type: String,
