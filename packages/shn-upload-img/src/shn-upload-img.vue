@@ -209,9 +209,9 @@ export default {
 
       reader.readAsDataURL(file) // 读出 base64
     },
-    getBase64ImgSize(str) {
+    getBase64ImgSize(base64Str) {
       //获取base64图片大小，返回KB数字
-      var str = str.replace('data:image/jpeg;base64,', '');//这里根据自己上传图片的格式进行相应修改
+      var str = base64Str.replace('data:image/jpeg;base64,', '');//这里根据自己上传图片的格式进行相应修改
       
       var strLength = str.length;
       var fileLength = parseInt(strLength - (strLength / 8) * 2);
